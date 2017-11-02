@@ -1,8 +1,28 @@
 #include <iostream>
 #include "lib/libbf/bf/all.hpp"
+#include "fasta_io.h"
+#include "kmer_util.hpp"
 
-int main() {
+using namespace std;
 
+void kmer_test(int argc, char **argv) {
+    if (argc < 2) return;
+
+    vector<string> reads;
+    read_fasta(argv[1], reads);
+    int i = 0;
+    for(const auto& s : reads) {
+        cout << "Read " << i++ << endl;
+        cout << s << endl;
+    }
+
+    kmer_t kmer = string_to_kmer(reads[0]);
+    cout << "kmer1: " << kmer_to_string(kmer) << endl;
+    cout << "kmer2: " << kmer_to_string(add_base_right(kmer, 'A')) << endl;
+    cout << "kmer2: " << kmer_to_string(add_base_left(kmer, 'A')) << endl;
+}
+
+int bloom_test() {
     bf::basic_bloom_filter b(0.8, 100);
     // Add two elements.
     b.add("foo");
@@ -17,6 +37,10 @@ int main() {
     b.clear();
     std::cout << b.lookup("foo") << std::endl;  // 0
     std::cout << b.lookup(42) << std::endl;     // 0
+}
 
+int main(int argc, char **argv) {
+    kmer_test(argc, argv);
+    bloom_test();
     return 0;
 }
