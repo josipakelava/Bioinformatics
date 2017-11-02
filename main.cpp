@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "fasta_io.h"
+#include "kmer_util.hpp"
 
 using namespace std;
 
-void fasta_test(int argc, char **argv) {
+void kmer_test(int argc, char **argv) {
     if (argc < 2) return;
 
     vector<string> reads;
@@ -14,9 +15,12 @@ void fasta_test(int argc, char **argv) {
         cout << "Read " << i++ << endl;
         cout << s << endl;
     }
+
+    kmer_t kmer = string_to_kmer(reads[0]);
+    cout << "kmer: " << kmer_to_string(kmer) << endl;
 }
 
 int main(int argc, char **argv) {
-    fasta_test(argc, argv);
+    kmer_test(argc, argv);
     return 0;
 }
