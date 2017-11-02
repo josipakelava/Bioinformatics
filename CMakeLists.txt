@@ -12,11 +12,14 @@ set(SOURCE_FILES
         lib/libbf/src/bloom_filter/basic.cpp
         lib/libbf/src/bloom_filter/bitwise.cpp
         lib/libbf/src/bloom_filter/counting.cpp
-        lib/libbf/src/bloom_filter/stable.cpp)
+        lib/libbf/src/bloom_filter/stable.cpp
+        fasta_io.cpp
+        fasta_io.h
+        kmer_util.hpp
+        DEBUG_UTIL.hpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-set(SOURCE_FILES main.cpp fasta_io.cpp fasta_io.h kmer_util.hpp DEBUG_UTIL.hpp)
 add_executable(Bioinformatika_projekt ${SOURCE_FILES})
 target_link_libraries(Bioinformatika_projekt ${Boost_LIBRARIES})
