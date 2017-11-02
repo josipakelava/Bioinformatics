@@ -17,7 +17,9 @@ void kmer_test(int argc, char **argv) {
     }
 
     kmer_t kmer = string_to_kmer(reads[0]);
-    cout << "kmer: " << kmer_to_string(kmer) << endl;
+    cout << "kmer1: " << kmer_to_string(kmer) << endl;
+    cout << "kmer2: " << kmer_to_string(add_base_right(kmer, 'A')) << endl;
+    cout << "kmer2: " << kmer_to_string(add_base_left(kmer, 'A')) << endl;
 }
 
 int main(int argc, char **argv) {

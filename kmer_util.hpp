@@ -8,9 +8,11 @@
 using namespace std;
 
 const int KMER_LENGTH = 20;
+const int KMER_SHIFT_LEFT = (1 << (2 * (KMER_LENGTH - 1)));
 using kmer_t = uint64_t;
 
 const kmer_t INVALID_KMER = -1;
+const kmer_t KMER_MASK = ((uint64_t)1 << (2*KMER_LENGTH)) - 1;
 
 inline kmer_t base_to_bits(char c) {
     if (c == 'A' || c == 'a') return 0;
@@ -51,6 +53,14 @@ string kmer_to_string(kmer_t kmer) {
     }
     reverse(s.begin(), s.end());
     return s;
+}
+
+inline kmer_t add_base_right(kmer_t kmer, char base) {
+    return ((kmer << 2) & KMER_MASK) | base_to_bits(base);
+}
+
+inline kmer_t add_base_left(kmer_t kmer, char base) {
+    return (kmer >> 2) | base_to_bits(base) << KMER_SHIFT_LEFT;
 }
 
 #endif //BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
