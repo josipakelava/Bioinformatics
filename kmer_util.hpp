@@ -8,7 +8,7 @@
 using namespace std;
 
 const int KMER_LENGTH = 20;
-const int KMER_SHIFT_LEFT = (1 << (2 * (KMER_LENGTH - 1)));
+const int KMER_SHIFT_LEFT = (2 * (KMER_LENGTH - 1));
 using kmer_t = uint64_t;
 
 const kmer_t INVALID_KMER = -1;

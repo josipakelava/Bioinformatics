@@ -22,7 +22,7 @@ void kmer_test(int argc, char **argv) {
     cout << "kmer2: " << kmer_to_string(add_base_left(kmer, 'A')) << endl;
 }
 
-int bloom_test() {
+void bloom_test() {
     bf::basic_bloom_filter b(0.8, 100);
     // Add two elements.
     b.add("foo");
