@@ -36,7 +36,7 @@ kmer_t substring_to_kmer(const string& s, int pos) {
 
     kmer_t kmer = 0;
     for(int i = 0; i < KMER_LENGTH; i++) {
-        kmer = kmer << 2 | base_to_bits(s[i]);
+        kmer = kmer << 2 | base_to_bits(s[i + pos]);
     }
 
     return kmer;
