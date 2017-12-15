@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <algorithm>
 #include "DEBUG_UTIL.hpp"
 
 using namespace std;
