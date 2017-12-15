@@ -20,7 +20,7 @@ inline kmer_t base_to_bits(char c) {
     if (c == 'G' || c == 'g') return 2;
     if (c == 'C' || c == 'c') return 3;
 
-    return 0;
+    return INVALID_KMER;
 }
 
 inline char bits_to_base(kmer_t kmer) {
