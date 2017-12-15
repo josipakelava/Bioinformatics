@@ -50,8 +50,8 @@ void contains_set_test() {
 }
 
 int main(int argc, char **argv) {
-    kmer_test(argc, argv);
-    bloom_test();
+//    kmer_test(argc, argv);
+//    bloom_test();
     contains_set_test();
     return 0;
 }

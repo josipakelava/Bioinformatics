@@ -18,8 +18,5 @@ set(SOURCE_FILES
         algorithms.hpp
         fasta_io.hpp)
 
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-
 add_executable(Bioinformatika_projekt ${SOURCE_FILES})
 target_link_libraries(Bioinformatika_projekt ${Boost_LIBRARIES})
