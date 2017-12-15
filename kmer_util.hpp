@@ -4,10 +4,11 @@
 #include <stdint.h>
 #include <string>
 #include "DEBUG_UTIL.hpp"
+#include "lib/libbf/bf/all.hpp"
 
 using namespace std;
 
-const int KMER_LENGTH = 20;
+const int KMER_LENGTH = 20; //isto kao i u radu
 const int KMER_SHIFT_LEFT = (2 * (KMER_LENGTH - 1));
 using kmer_t = uint64_t;
 
@@ -61,6 +62,15 @@ inline kmer_t add_base_right(kmer_t kmer, char base) {
 
 inline kmer_t add_base_left(kmer_t kmer, char base) {
     return (kmer >> 2) | base_to_bits(base) << KMER_SHIFT_LEFT;
+}
+
+bool contains_set(const vector<kmer_t>& query, const bf::basic_bloom_filter& bf) {
+    for(kmer_t kmer : query) {
+        if(bf.lookup(kmer)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 #endif //BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
