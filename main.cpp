@@ -51,6 +51,7 @@ void contains_set_test() {
 }
 void test1(const char* filePath) {
 
+    OneSided kbf1;
     vector<string> sequnces;
     read_fasta(filePath, sequnces);
     unordered_set<kmer_t> set;
@@ -72,8 +73,8 @@ void test1(const char* filePath) {
     kmer_t random2 = *(it);
     kmer_t random1 = random2 ^(15 << 5);
     cout << "Test kbf1" << endl;
-    cout << one_sided_kBF(random2, bf) << endl;
-    cout << one_sided_kBF(random1, bf) << endl;
+    cout << kbf1(random2, bf) << endl;
+    cout << kbf1(random1, bf) << endl;
 
     cout << bf.lookup(random2) << endl;
     cout << bf.lookup(random1) << endl;
@@ -108,8 +109,8 @@ void test2(const char* filePath) {
     kmer_t random2 = *(it);
     kmer_t random1 = random2 ^(15 << 5);
     cout << "Test kbf2" << endl;
-    cout << kbf2.operator()(random2, bf) << endl;
-    cout << kbf2.operator()(random1, bf) << endl;
+    cout << kbf2(random2, bf) << endl;
+    cout << kbf2(random1, bf) << endl;
 
     cout << bf.lookup(random2) << endl;
     cout << bf.lookup(random1) << endl;
