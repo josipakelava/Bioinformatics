@@ -2,6 +2,8 @@
 #include "lib/libbf/bf/all.hpp"
 #include "fasta_io.hpp"
 #include "kmer_util.hpp"
+#include "algorithms.hpp"
+#include <unordered_set>
 
 using namespace std;
 
@@ -48,10 +50,41 @@ void contains_set_test() {
     bf.add(5);
     cout << contains_set(query, bf) << std::endl; // 1
 }
+void test1(const char* filePath) {
+    vector<string> sequnces;
+    read_fasta(filePath, sequnces);
+    unordered_set<kmer_t> set;
+    for (string seq : sequnces) {
+        kmer_t kmer = string_to_kmer(seq);
+        set.insert(kmer);
+        for (int i = KMER_LENGTH; i < seq.length(); i++) {
+            kmer = add_base_right(kmer, seq[i]);
+            set.insert(kmer);
+        }
+    }
+    bf::basic_bloom_filter bf(0.8, set.size());
+    for (kmer_t kmer : set) {
+        bf.add(kmer);
+    }
+
+    auto it = set.begin();
+    it++;
+    kmer_t random2 = *(it);
+    kmer_t random1 = random2 ^(1 << 10);
+    cout << "Test kbf1" << endl;
+    cout << one_sided_kBF(random2, bf) << endl;
+    cout << one_sided_kBF(random1, bf) << endl;
+
+    cout << bf.lookup(random2) << endl;
+    cout << bf.lookup(random1) << endl;
+
+    cout << (set.find(random2) != set.end()) << endl;
+    cout << (set.find(random1) != set.end()) << endl;
+}
 
 int main(int argc, char **argv) {
 //    kmer_test(argc, argv);
-//    bloom_test();
+    test1(argv[1]);
     contains_set_test();
     return 0;
 }
