@@ -16,7 +16,8 @@ set(SOURCE_FILES
         fasta_io.cpp
         fasta_io.h
         kmer_util.hpp
-        DEBUG_UTIL.hpp)
+        DEBUG_UTIL.hpp
+        algorithms.hpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
