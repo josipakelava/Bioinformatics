@@ -62,7 +62,7 @@ void test1(const char* filePath) {
             set.insert(kmer);
         }
     }
-    bf::basic_bloom_filter bf(0.8, set.size());
+    bf::basic_bloom_filter bf(bf::make_hasher(2), set.size()*10);
     for (kmer_t kmer : set) {
         bf.add(kmer);
     }
@@ -70,7 +70,7 @@ void test1(const char* filePath) {
     auto it = set.begin();
     it++;
     kmer_t random2 = *(it);
-    kmer_t random1 = random2 ^(1 << 10);
+    kmer_t random1 = random2 ^(15 << 5);
     cout << "Test kbf1" << endl;
     cout << one_sided_kBF(random2, bf) << endl;
     cout << one_sided_kBF(random1, bf) << endl;
