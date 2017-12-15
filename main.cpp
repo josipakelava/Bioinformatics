@@ -39,8 +39,19 @@ void bloom_test() {
     std::cout << b.lookup(42) << std::endl;     // 0
 }
 
+void contains_set_test() {
+    cout << "Contains set" << std::endl;
+    vector<kmer_t> query = {1, 2, 3, 4, 5};
+    bf::basic_bloom_filter bf(0.8, 100);
+    cout << contains_set(query, bf) << std::endl; // 0
+    bf.add(3);
+    bf.add(5);
+    cout << contains_set(query, bf) << std::endl; // 1
+}
+
 int main(int argc, char **argv) {
     kmer_test(argc, argv);
     bloom_test();
+    contains_set_test();
     return 0;
 }
