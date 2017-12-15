@@ -13,11 +13,10 @@ set(SOURCE_FILES
         lib/libbf/src/bloom_filter/bitwise.cpp
         lib/libbf/src/bloom_filter/counting.cpp
         lib/libbf/src/bloom_filter/stable.cpp
-        fasta_io.cpp
-        fasta_io.h
         kmer_util.hpp
         DEBUG_UTIL.hpp
-        algorithms.hpp)
+        algorithms.hpp
+        fasta_io.hpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})

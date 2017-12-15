@@ -1,12 +1,11 @@
-//
-// Created by Ivan Krpelnik on 02/11/17.
-//
-
-#include "fasta_io.h"
+#ifndef BIOINFORMATIKA_PROJEKT_FASTA_INPUT_H
+#define BIOINFORMATIKA_PROJEKT_FASTA_INPUT_H
 
 #include <fstream>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+
+using namespace std;
 
 void read_fasta(const char *filePath, vector<string>& reads) {
     std::cout << filePath << std::endl;
@@ -28,3 +27,5 @@ void read_fasta(const char *filePath, vector<string>& reads) {
 
     if(!buildSeq.empty()) reads.emplace_back(buildSeq);
 }
+
+#endif //BIOINFORMATIKA_PROJEKT_FASTA_INPUT_H

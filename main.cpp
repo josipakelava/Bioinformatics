@@ -1,6 +1,6 @@
 #include <iostream>
 #include "lib/libbf/bf/all.hpp"
-#include "fasta_io.h"
+#include "fasta_io.hpp"
 #include "kmer_util.hpp"
 
 using namespace std;

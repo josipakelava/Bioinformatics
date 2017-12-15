@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <algorithm>
 #include "DEBUG_UTIL.hpp"
 #include "lib/libbf/bf/all.hpp"
 
