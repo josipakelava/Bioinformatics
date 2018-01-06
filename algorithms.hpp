@@ -99,7 +99,7 @@ struct SparseKBF {
 
     }
 
-    bool lookupStrict(kmer_t query) {
+    bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
             if (strictContainsNeighbours(query, s, s)) {
                 return true;
@@ -120,7 +120,42 @@ struct SparseKBF {
                 strict_neighbor_set(query, 0, right), *bf));
     }
 
-    bool lookupRelaxed(kmer_t query) {
+
+    bool decidePresent(kmer_t query, bool containsLeft, bool containsRight) {
+        if (containsRight && containsLeft) {
+            return true;
+        }
+
+        if (containsRight || containsLeft) {
+            if(edge_kmer.find(query) != edge_kmer.end()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    ~SparseKBF() {
+        delete bf;
+    }
+};
+
+struct SparseRelaxedKBF {
+
+    bf::basic_bloom_filter *bf;
+    unordered_set<kmer_t> edge_kmer;
+    int s;
+
+    explicit SparseRelaxedKBF(const unordered_set<kmer_t> &sparse_set, const unordered_set<kmer_t> &edges, int s) : edge_kmer(edges), s(s) {
+
+        bf = new bf::basic_bloom_filter(bf::make_hasher(2), sparse_set.size()*10);
+        for (kmer_t kmer : sparse_set) {
+            bf->add(kmer);
+        }
+
+    }
+
+    bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
             if (relaxedContainsNeighbours(query, s, s)) {
                 return true;
@@ -153,7 +188,7 @@ struct SparseKBF {
         return false;
     }
 
-    ~SparseKBF() {
+    ~SparseRelaxedKBF() {
         delete bf;
     }
 };

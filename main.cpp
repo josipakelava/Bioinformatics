@@ -49,6 +49,7 @@ void contains_set_test() {
     bf.add(5);
     cout << contains_set(query, bf) << std::endl; // 1
 }
+
 void test1(const unordered_set<kmer_t> &set) {
     BasicBF basicBF(set);
     OneSided kbf1(set);
@@ -98,8 +99,8 @@ void test3(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges,
     kmer_t random2 = *(it);
     kmer_t random1 = random2 ^(10 << 5);
     cout << "Test sparse" << endl;
-    cout << kbf.lookupStrict(random2) << endl;
-    cout << kbf.lookupStrict(random1) << endl;
+    cout << kbf.lookup(random2) << endl;
+    cout << kbf.lookup(random1) << endl;
 
     cout << basicBF.lookup(random2) << endl;
     cout << basicBF.lookup(random1) << endl;
