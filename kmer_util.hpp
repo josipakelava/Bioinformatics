@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <unordered_set>
+#include <queue>
 #include "DEBUG_UTIL.hpp"
 #include "lib/libbf/bf/all.hpp"
 
@@ -34,7 +35,7 @@ inline char bits_to_base(kmer_t kmer) {
 }
 
 kmer_t substring_to_kmer(const string &s, int pos) {
-    if (pos + KMER_LENGTH >= s.length()) {
+    if (pos + KMER_LENGTH > s.length()) {
         return INVALID_KMER;
     }
 
@@ -77,17 +78,6 @@ bool contains_set(const vector<kmer_t> &query, const bf::basic_bloom_filter &bf)
     return false;
 }
 
-vector<kmer_t> neighbor_left_set(kmer_t query) {
-    vector<kmer_t> neighbors = {add_base_left(query, 'A'), add_base_left(query, 'G'), add_base_left(query, 'T'),
-                                add_base_left(query, 'C')};
-    return neighbors;
-}
-
-vector<kmer_t> neighbor_right_set(kmer_t query) {
-    vector<kmer_t> neighbors = {add_base_right(query, 'A'), add_base_right(query, 'G'), add_base_right(query, 'T'),
-                                add_base_right(query, 'C')};
-    return neighbors;
-}
 unordered_set<kmer_t> query_set(const vector<kmer_t> &kmers) {
     unordered_set<kmer_t> query_set;
 
@@ -135,6 +125,91 @@ unordered_set<kmer_t> generate_set_edge(const vector<string> &sequnces, unordere
         edge_kmer.insert(kmer);
     }
     return set;
+}
+
+unordered_set<kmer_t> generate_sparse_set(const string &seq, const int s){
+
+    unordered_set<kmer_t> set;
+    kmer_t kmer;
+
+    for (int i = 0; i < seq.length(); i+= s + 1) {
+        kmer = substring_to_kmer(seq, i);
+        set.insert(kmer);
+    }
+
+    return set;
+}
+
+vector<kmer_t> neighbor_left_set(kmer_t query) {
+    vector<kmer_t> neighbors = {add_base_left(query, 'A'), add_base_left(query, 'G'), add_base_left(query, 'T'),
+                                add_base_left(query, 'C')};
+    return neighbors;
+}
+
+vector<kmer_t> neighbor_right_set(kmer_t query) {
+    vector<kmer_t> neighbors = {add_base_right(query, 'A'), add_base_right(query, 'G'), add_base_right(query, 'T'),
+                                add_base_right(query, 'C')};
+    return neighbors;
+}
+
+vector<kmer_t> neighbor_set(kmer_t query, int left, int right) {
+    vector<kmer_t> neighbors;
+
+    queue<kmer_t> result;
+    result.push(query);
+
+    queue<kmer_t> current;
+    for (int i = 0; i < left; ++i) {
+
+        while(result.size() > 0) {
+            kmer_t kmer = result.front(); result.pop();
+            current.push(kmer);
+        }
+
+        while(current.size() > 0) {
+            kmer_t kmer = current.front(); current.pop();
+            vector<kmer_t> neighbors = neighbor_left_set(kmer);
+            for(kmer_t neighbor : neighbors) {
+                result.push(neighbor);
+            }
+        }
+    }
+
+    while(result.size() > 0) {
+        kmer_t kmer = result.front(); result.pop();
+        neighbors.push_back(kmer);
+    }
+
+    result.push(query);
+
+    for (int i = 0; i < right; ++i) {
+
+        while(result.size() > 0) {
+            kmer_t kmer = result.front(); result.pop();
+            current.push(kmer);
+        }
+
+        while(current.size() > 0) {
+            kmer_t kmer = current.front(); current.pop();
+            vector<kmer_t> neighbors = neighbor_right_set(kmer);
+            for(kmer_t neighbor : neighbors) {
+                result.push(neighbor);
+            }
+        }
+    }
+
+    while(result.size() > 0) {
+        kmer_t kmer = result.front(); result.pop();
+        neighbors.push_back(kmer);
+    }
+
+    return neighbors;
+}
+
+vector<kmer_t> neighbor_right_set(kmer_t query, const int s) {
+    vector<kmer_t> neighbors = {add_base_right(query, 'A'), add_base_right(query, 'G'), add_base_right(query, 'T'),
+                                add_base_right(query, 'C')};
+    return neighbors;
 }
 
 #endif //BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP

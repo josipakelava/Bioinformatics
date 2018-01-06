@@ -90,17 +90,23 @@ void test2(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges)
 
 int main(int argc, char **argv) {
 
-    vector<string> sequences;
-    read_fasta(argv[1], sequences);
-    unordered_set<kmer_t> kmers(generate_set(sequences));
+//    vector<string> sequences;
+//    read_fasta(argv[1], sequences);
+//    unordered_set<kmer_t> kmers(generate_set(sequences));
+//
+//    unordered_set<kmer_t> edge_kmers;
+//    unordered_set<kmer_t> kmers2(generate_set_edge(sequences, edge_kmers));
+//
+////    kmer_test(argc, argv);
+//    test1(kmers);
+//    test2(kmers, edge_kmers);
+//
+//    contains_set_test();
 
-    unordered_set<kmer_t> edge_kmers;
-    unordered_set<kmer_t> kmers2(generate_set_edge(sequences, edge_kmers));
+    vector<kmer_t> set = neighbor_set(string_to_kmer("AAAAAAAAAAAAAAAAAAAA"), 2, 3);
+    for(kmer_t neighbour : set) {
+        cout << kmer_to_string(neighbour) << endl;
+    }
 
-//    kmer_test(argc, argv);
-    test1(kmers);
-    test2(kmers, edge_kmers);
-
-    contains_set_test();
     return 0;
 }

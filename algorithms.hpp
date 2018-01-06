@@ -84,3 +84,40 @@ struct TwoSided {
     }
 };
 
+struct SparseKBF {
+
+    bf::basic_bloom_filter *bf;
+    int s;
+
+    explicit SparseKBF(const unordered_set<kmer_t> &sparse_set, int s) : s(s) {
+
+        bf = new bf::basic_bloom_filter(bf::make_hasher(2), sparse_set.size()*10);
+        for (kmer_t kmer : sparse_set) {
+            bf->add(kmer);
+        }
+
+    }
+
+    bool lookup(kmer_t query) {
+        if (bf->lookup(query)) {
+            vector<kmer_t> left(neighbor_left_set(query));
+            vector<kmer_t> right(neighbor_right_set(query));
+            return contains_set(left, *bf) | contains_set(right, *bf);
+        }
+        return false;
+    }
+
+    bool lookupLeft(kmer_t query, int i) {
+
+    }
+
+    bool lookupRight(kmer_t query, int i) {
+
+    }
+
+    ~SparseKBF() {
+        delete bf;
+    }
+};
+
+
