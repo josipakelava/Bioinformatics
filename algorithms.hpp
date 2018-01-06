@@ -16,6 +16,7 @@ struct BasicBF {
             bf->add(kmer);
         }
     }
+
     bool lookup(kmer_t query) {
         return bf->lookup(query) > 0;
     }
@@ -38,9 +39,7 @@ struct OneSided {
     }
     bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
-            unordered_set<kmer_t> left(neighbor_left_set(query));
-            unordered_set<kmer_t> right(neighbor_right_set(query));
-            return contains_set(left, *bf) | contains_set(right, *bf);
+            return contains_set(neighbor_left_set(query), *bf) | contains_set(neighbor_right_set(query), *bf);
         }
         return false;
     }
@@ -50,12 +49,26 @@ struct OneSided {
     }
 };
 
+bool decidePresent(kmer_t query, const unordered_set<kmer_t> &edges, bool containsLeft, bool containsRight) {
+    if (containsRight && containsLeft) {
+        return true;
+    }
+
+    if (containsRight || containsLeft) {
+        if(edges.find(query) != edges.end()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 struct TwoSided {
 
-    unordered_set<kmer_t> edge_kmer;
+    unordered_set<kmer_t> edges;
 
     bf::basic_bloom_filter *bf;
-    TwoSided(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges) : edge_kmer(edges) {
+    TwoSided(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges) : edges(edges) {
 
         bf = new bf::basic_bloom_filter(bf::make_hasher(2), set.size()*10);
         for (kmer_t kmer : set) {
@@ -65,17 +78,9 @@ struct TwoSided {
 
     bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
-            unordered_set<kmer_t> left(neighbor_left_set(query));
-            unordered_set<kmer_t> right(neighbor_right_set(query));
-
-            bool contains_left = contains_set(left, *bf);
-            bool contains_right = contains_set(right, *bf);
-
-            if (contains_left && contains_right) return true;
-            if (contains_left || contains_right)
-                if(edge_kmer.find(query) != edge_kmer.end())
-                    return true;
+            return decidePresent(query, edges, contains_set(neighbor_left_set(query), *bf), contains_set(neighbor_right_set(query), *bf));
         }
+
         return false;
     }
 
@@ -87,10 +92,10 @@ struct TwoSided {
 struct SparseKBF {
 
     bf::basic_bloom_filter *bf;
-    unordered_set<kmer_t> edge_kmer;
+    unordered_set<kmer_t> edges;
     int s;
 
-    explicit SparseKBF(const unordered_set<kmer_t> &sparse_set, const unordered_set<kmer_t> &edges, int s) : edge_kmer(edges), s(s) {
+    explicit SparseKBF(const unordered_set<kmer_t> &sparse_set, const unordered_set<kmer_t> &edges, int s) : edges(edges), s(s) {
 
         bf = new bf::basic_bloom_filter(bf::make_hasher(2), sparse_set.size()*10);
         for (kmer_t kmer : sparse_set) {
@@ -116,23 +121,8 @@ struct SparseKBF {
     }
 
     bool strictContainsNeighbours(kmer_t query, int left, int right) {
-        return decidePresent(query, contains_set(strict_neighbor_set(query, left, 0), *bf), contains_set(
+        return decidePresent(query, edges, contains_set(strict_neighbor_set(query, left, 0), *bf), contains_set(
                 strict_neighbor_set(query, 0, right), *bf));
-    }
-
-
-    bool decidePresent(kmer_t query, bool containsLeft, bool containsRight) {
-        if (containsRight && containsLeft) {
-            return true;
-        }
-
-        if (containsRight || containsLeft) {
-            if(edge_kmer.find(query) != edge_kmer.end()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     ~SparseKBF() {
@@ -143,10 +133,10 @@ struct SparseKBF {
 struct SparseRelaxedKBF {
 
     bf::basic_bloom_filter *bf;
-    unordered_set<kmer_t> edge_kmer;
+    unordered_set<kmer_t> edges;
     int s;
 
-    explicit SparseRelaxedKBF(const unordered_set<kmer_t> &sparse_set, const unordered_set<kmer_t> &edges, int s) : edge_kmer(edges), s(s) {
+    explicit SparseRelaxedKBF(const unordered_set<kmer_t> &sparse_set, const unordered_set<kmer_t> &edges, int s) : edges(edges), s(s) {
 
         bf = new bf::basic_bloom_filter(bf::make_hasher(2), sparse_set.size()*10);
         for (kmer_t kmer : sparse_set) {
@@ -171,26 +161,14 @@ struct SparseRelaxedKBF {
     }
 
     bool relaxedContainsNeighbours(kmer_t query, int left, int right) {
-        return decidePresent(query, contains_set(relaxed_neighbor_set(query, left, 0), *bf), contains_set(relaxed_neighbor_set(query, 0, right), *bf));
+        return decidePresent(query, edges, contains_set(relaxed_neighbor_set(query, left, 0), *bf), contains_set(relaxed_neighbor_set(query, 0, right), *bf));
     }
 
-    bool decidePresent(kmer_t query, bool containsLeft, bool containsRight) {
-        if (containsRight && containsLeft) {
-            return true;
-        }
-
-        if (containsRight || containsLeft) {
-            if(edge_kmer.find(query) != edge_kmer.end()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     ~SparseRelaxedKBF() {
         delete bf;
     }
 };
+
 
 
