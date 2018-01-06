@@ -42,7 +42,7 @@ void bloom_test() {
 
 void contains_set_test() {
     cout << "Contains set" << std::endl;
-    vector<kmer_t> query = {1, 2, 3, 4, 5};
+    unordered_set<kmer_t> query = {1, 2, 3, 4, 5};
     bf::basic_bloom_filter bf(0.8, 100);
     cout << contains_set(query, bf) << std::endl; // 0
     bf.add(3);
@@ -88,6 +88,27 @@ void test2(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges)
     cout << (set.find(random1) != set.end()) << endl;
 }
 
+void test3(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges, int s) {
+
+    BasicBF basicBF(set);
+    SparseKBF kbf(set, edges, s);
+
+    auto it = set.begin();
+    it++;
+    kmer_t random2 = *(it);
+    kmer_t random1 = random2 ^(10 << 5);
+    cout << "Test sparse" << endl;
+    cout << kbf.lookupStrict(random2) << endl;
+    cout << kbf.lookupStrict(random1) << endl;
+
+    cout << basicBF.lookup(random2) << endl;
+    cout << basicBF.lookup(random1) << endl;
+
+    cout << (set.find(random2) != set.end()) << endl;
+    cout << (set.find(random1) != set.end()) << endl;
+}
+
+
 int main(int argc, char **argv) {
 
 //    vector<string> sequences;
@@ -103,10 +124,23 @@ int main(int argc, char **argv) {
 //
 //    contains_set_test();
 
-    vector<kmer_t> set = neighbor_set(string_to_kmer("AAAAAAAAAAAAAAAAAAAA"), 2, 3);
-    for(kmer_t neighbour : set) {
-        cout << kmer_to_string(neighbour) << endl;
-    }
+//    unordered_set<kmer_t> set = strict_neighbor_set(string_to_kmer("AAAAAAAAAAAAAAAAAAAA"), 0, 3);
+//    for(kmer_t neighbour : set) {
+//        cout << kmer_to_string(neighbour) << endl;
+//    }
+//    cout << set.size()<< endl;
+
+//    unordered_set<kmer_t> set = relaxed_neighbor_set(string_to_kmer("AAAAAAAAAAAAAAAAAATA"), 0, 3);
+//    for(kmer_t neighbour : set) {
+//        cout << kmer_to_string(neighbour) << endl;
+//    }
+//    cout << set.size()<< endl;
+
+    vector<string> sequences;
+    read_fasta(argv[2], sequences);
+    unordered_set<kmer_t> edge_kmers;
+    unordered_set<kmer_t> kmers(generate_sparse_set(sequences[0], edge_kmers, 2));
+    test3(kmers, edge_kmers, 2);
 
     return 0;
 }
