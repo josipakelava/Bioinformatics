@@ -133,14 +133,41 @@ unordered_set<kmer_t> generate_sparse_set(const string &seq, unordered_set<kmer_
     kmer_t kmer;
 
     edge_kmer.insert(string_to_kmer(seq));
-    edge_kmer.insert(substring_to_kmer(seq, seq.length() - KMER_LENGTH));
 
-    for (int i = 0; i < seq.length(); i+= s + 1) {
+    int i = 0;
+    for (; i < seq.length() - KMER_LENGTH + 1; i += s + 1) {
         kmer = substring_to_kmer(seq, i);
         set.insert(kmer);
     }
-
+    for(i -= s + 1; i < seq.length() - KMER_LENGTH+1; i++)
+        edge_kmer.insert(substring_to_kmer(seq, i));
     return set;
+}
+
+unordered_set<kmer_t> generate_best_fit_set(const vector<string> &sequences, unordered_set<kmer_t> &edge_kmer, int s) {
+    unordered_set<kmer_t> kmers;
+    const int MOD = s + 1;
+    for(auto& seq : sequences) {
+        int count[MOD];
+        int mx_ind = 0;
+        for(int i = 0; i < MOD; i++) count[i] = 0;
+        for(int i = 0; i < seq.length() - KMER_LENGTH + 1; i++) {
+            if(kmers.find(substring_to_kmer(seq, i)) != kmers.end()) {
+                const int ind = i % MOD;
+                if(++count[ind] > count[mx_ind])
+                    mx_ind = ind;
+            }
+        }
+
+        int i = 0;
+        for(; i <= mx_ind; i++) edge_kmer.insert(substring_to_kmer(seq, i));
+        for (i = mx_ind; i < seq.length() - KMER_LENGTH + 1; i += s + 1) {
+            kmers.insert(substring_to_kmer(seq, i));
+        }
+        for(i -= s + 1; i < seq.length() - KMER_LENGTH+1; i++)
+            edge_kmer.insert(substring_to_kmer(seq, i));
+    }
+    return kmers;
 }
 
 unordered_set<kmer_t> neighbor_left_set(kmer_t query) {

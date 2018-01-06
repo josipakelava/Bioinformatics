@@ -109,7 +109,6 @@ void test3(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges,
     cout << (set.find(random1) != set.end()) << endl;
 }
 
-
 int main(int argc, char **argv) {
 
 //    vector<string> sequences;
@@ -138,10 +137,10 @@ int main(int argc, char **argv) {
 //    cout << set.size()<< endl;
 
     vector<string> sequences;
-    read_fasta(argv[2], sequences);
+    read_fasta(argv[1], sequences);
     unordered_set<kmer_t> edge_kmers;
-    unordered_set<kmer_t> kmers(generate_sparse_set(sequences[0], edge_kmers, 2));
-    test3(kmers, edge_kmers, 2);
+    unordered_set<kmer_t> kmers(generate_best_fit_set(sequences, edge_kmers, 10));
+    test3(kmers, edge_kmers, 10);
 
     return 0;
 }
