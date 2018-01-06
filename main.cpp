@@ -49,80 +49,58 @@ void contains_set_test() {
     bf.add(5);
     cout << contains_set(query, bf) << std::endl; // 1
 }
-void test1(const char* filePath) {
-
-    OneSided kbf1;
-    vector<string> sequnces;
-    read_fasta(filePath, sequnces);
-    unordered_set<kmer_t> set;
-    for (string seq : sequnces) {
-        kmer_t kmer = string_to_kmer(seq);
-        set.insert(kmer);
-        for (int i = KMER_LENGTH; i < seq.length(); i++) {
-            kmer = add_base_right(kmer, seq[i]);
-            set.insert(kmer);
-        }
-    }
-    bf::basic_bloom_filter bf(bf::make_hasher(2), set.size()*10);
-    for (kmer_t kmer : set) {
-        bf.add(kmer);
-    }
+void test1(const unordered_set<kmer_t> &set) {
+    BasicBF basicBF(set);
+    OneSided kbf1(set);
 
     auto it = set.begin();
     it++;
     kmer_t random2 = *(it);
     kmer_t random1 = random2 ^(15 << 5);
     cout << "Test kbf1" << endl;
-    cout << kbf1(random2, bf) << endl;
-    cout << kbf1(random1, bf) << endl;
+    cout << kbf1.lookup(random2) << endl;
+    cout << kbf1.lookup(random1) << endl;
 
-    cout << bf.lookup(random2) << endl;
-    cout << bf.lookup(random1) << endl;
+    cout << basicBF.lookup(random2) << endl;
+    cout << basicBF.lookup(random1) << endl;
 
     cout << (set.find(random2) != set.end()) << endl;
     cout << (set.find(random1) != set.end()) << endl;
 }
 
-void test2(const char* filePath) {
+void test2(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges) {
 
-    TwoSided kbf2;
-    vector<string> sequnces;
-    read_fasta(filePath, sequnces);
-    unordered_set<kmer_t> set;
-    for (string seq : sequnces) {
-        kmer_t kmer = string_to_kmer(seq);
-        set.insert(kmer);
-        kbf2.edge_kmer.insert(kmer);
-        for (int i = KMER_LENGTH; i < seq.length(); i++) {
-            kmer = add_base_right(kmer, seq[i]);
-            set.insert(kmer);
-        }
-        kbf2.edge_kmer.insert(kmer);
-    }
-    bf::basic_bloom_filter bf(bf::make_hasher(2), set.size()*10);
-    for (kmer_t kmer : set) {
-        bf.add(kmer);
-    }
+    BasicBF basicBF(set);
+    TwoSided kbf2(set, edges);
 
     auto it = set.begin();
     it++;
     kmer_t random2 = *(it);
     kmer_t random1 = random2 ^(15 << 5);
     cout << "Test kbf2" << endl;
-    cout << kbf2(random2, bf) << endl;
-    cout << kbf2(random1, bf) << endl;
+    cout << kbf2.lookup(random2) << endl;
+    cout << kbf2.lookup(random1) << endl;
 
-    cout << bf.lookup(random2) << endl;
-    cout << bf.lookup(random1) << endl;
+    cout << basicBF.lookup(random2) << endl;
+    cout << basicBF.lookup(random1) << endl;
 
     cout << (set.find(random2) != set.end()) << endl;
     cout << (set.find(random1) != set.end()) << endl;
 }
 
 int main(int argc, char **argv) {
+
+    vector<string> sequences;
+    read_fasta(argv[1], sequences);
+    unordered_set<kmer_t> kmers(generate_set(sequences));
+
+    unordered_set<kmer_t> edge_kmers;
+    unordered_set<kmer_t> kmers2(generate_set_edge(sequences, edge_kmers));
+
 //    kmer_test(argc, argv);
-    test1(argv[1]);
-    test2(argv[1]);
+    test1(kmers);
+    test2(kmers, edge_kmers);
+
     contains_set_test();
     return 0;
 }

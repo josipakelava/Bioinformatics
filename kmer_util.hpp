@@ -88,7 +88,7 @@ vector<kmer_t> neighbor_right_set(kmer_t query) {
                                 add_base_right(query, 'C')};
     return neighbors;
 }
-unordered_set<kmer_t> query_set(const vector<kmer_t> kmers) {
+unordered_set<kmer_t> query_set(const vector<kmer_t> &kmers) {
     unordered_set<kmer_t> query_set;
 
     mt19937 random;
@@ -107,5 +107,34 @@ unordered_set<kmer_t> query_set(const vector<kmer_t> kmers) {
     return query_set;
 }
 
+unordered_set<kmer_t> generate_set(const vector<string> &sequnces){
+
+    unordered_set<kmer_t> set;
+    for (string seq : sequnces) {
+        kmer_t kmer = string_to_kmer(seq);
+        set.insert(kmer);
+        for (int i = KMER_LENGTH; i < seq.length(); i++) {
+            kmer = add_base_right(kmer, seq[i]);
+            set.insert(kmer);
+        }
+    }
+    return set;
+}
+
+unordered_set<kmer_t> generate_set_edge(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer){
+
+    unordered_set<kmer_t> set;
+    for (string seq : sequnces) {
+        kmer_t kmer = string_to_kmer(seq);
+        set.insert(kmer);
+        edge_kmer.insert(kmer);
+        for (int i = KMER_LENGTH; i < seq.length(); i++) {
+            kmer = add_base_right(kmer, seq[i]);
+            set.insert(kmer);
+        }
+        edge_kmer.insert(kmer);
+    }
+    return set;
+}
 
 #endif //BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
