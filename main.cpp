@@ -137,10 +137,11 @@ int main(int argc, char **argv) {
 //    cout << set.size()<< endl;
 
     vector<string> sequences;
-    read_fasta(argv[1], sequences);
-    unordered_set<kmer_t> edge_kmers;
-    unordered_set<kmer_t> kmers(generate_best_fit_set(sequences, edge_kmers, 10));
-    test3(kmers, edge_kmers, 10);
+    read_fasta(argv[2], sequences);
+    cout << sequences.size() << endl;
+//    unordered_set<kmer_t> edge_kmers;
+//    unordered_set<kmer_t> kmers(generate_best_fit_set(sequences, edge_kmers, 10));
+//    test3(kmers, edge_kmers, 10);
 
     return 0;
 }

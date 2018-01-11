@@ -6,8 +6,11 @@
 #include <algorithm>
 #include <unordered_set>
 #include <queue>
+#include <vector>
 #include "DEBUG_UTIL.hpp"
 #include "lib/libbf/bf/all.hpp"
+#include <unordered_map>
+#include <set>
 
 using namespace std;
 
@@ -167,6 +170,103 @@ unordered_set<kmer_t> generate_best_fit_set(const vector<string> &sequences, uno
         for(i -= s + 1; i < seq.length() - KMER_LENGTH+1; i++)
             edge_kmer.insert(substring_to_kmer(seq, i));
     }
+    return kmers;
+}
+
+struct KmerNode {
+    kmer_t kmer;
+    unsigned int deg;
+    unordered_set<unordered_set<kmer_t>*> neighbours;
+
+    KmerNode(kmer_t kmer) : kmer(kmer), deg(0) {}
+
+    void add(unordered_set<kmer_t>* n) {
+        neighbours.insert(n);
+        deg++;
+    }
+
+    void remove(unordered_set<kmer_t>* n) {
+        neighbours.erase(n);
+        deg--;
+    }
+
+};
+
+struct NodeCMP {
+    bool operator()(const KmerNode* first, const KmerNode* second) {
+        return first->deg < second->deg;
+    }
+
+};
+
+unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences, unordered_set<kmer_t> &edge_kmer) {
+    unordered_map<kmer_t, unordered_set<kmer_t>> m;
+    for(const auto &seq : sequences) {
+        kmer_t left = string_to_kmer(seq);
+        kmer_t mid = add_base_right(left, seq[KMER_LENGTH]);
+        kmer_t right = add_base_right(mid, seq[KMER_LENGTH+1]);
+        edge_kmer.insert(left); //first
+        m[left].insert(mid);
+        int i = KMER_LENGTH+2;
+        for(; i < seq.size(); i++) {
+            m[mid].insert(left);
+            m[mid].insert(right);
+            left = mid;
+            mid = right;
+            right = add_base_right(right, seq[i]);
+        }
+        m[right].insert(mid);
+        edge_kmer.insert(right);
+    }
+
+
+    set<KmerNode*, NodeCMP> s;
+    unordered_map<kmer_t, KmerNode*> kmerToPtr;
+    vector<KmerNode*> allPtrs;
+    for(auto& kv : m) {
+        for(auto kmer : kv.second) {
+            if(kmerToPtr.find(kmer) == kmerToPtr.end()) {
+                KmerNode *node = new KmerNode(kmer);
+                kmerToPtr[kmer] = node;
+                node->add(&kv.second);
+                s.insert(node);
+                allPtrs.push_back(node);
+            } else {
+                s.erase(kmerToPtr[kmer]);
+                kmerToPtr[kmer]->add(&kv.second);
+                s.insert(kmerToPtr[kmer]);
+            }
+
+        }
+    }
+
+    unordered_set<kmer_t> kmers;
+    while(!s.empty()) {
+        KmerNode* mx = *s.begin();
+        s.erase(s.begin());
+        kmers.insert(mx->kmer);
+        kmerToPtr.erase(mx->kmer);
+        for(auto ns : mx->neighbours) {
+            for(auto kmer : *ns) {
+                if(kmer == mx->kmer) continue;
+                s.erase(kmerToPtr[kmer]);
+                kmerToPtr[kmer]->remove(ns);
+                if (kmerToPtr[kmer]->deg > 0) {
+                    s.insert(kmerToPtr[kmer]);
+                } else {
+                    kmerToPtr.erase(kmer);
+                }
+
+            }
+        }
+    }
+
+    while(allPtrs.size()) {
+        auto p = allPtrs.back();
+        allPtrs.pop_back();
+        delete p;
+    }
+
     return kmers;
 }
 
