@@ -120,20 +120,29 @@ unordered_set<kmer_t> generate_set(const vector<string> &sequnces){
     return set;
 }
 
-unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer){
+unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer, int &numberOfPotentialEdges){
 
-    unordered_set<kmer_t> set;
+    unordered_set<kmer_t> kmers;
+    unordered_set<kmer_t> potential_edge_kmers;
+
     for (string seq : sequnces) {
         kmer_t kmer = string_to_kmer(seq);
-        set.insert(kmer);
-        edge_kmer.insert(kmer);
-        for (int i = KMER_LENGTH; i < seq.length(); i++) {
+        potential_edge_kmers.insert(kmer);
+        for (int i = KMER_LENGTH + 1; i < seq.length() - 1; i++) {
             kmer = add_base_right(kmer, seq[i]);
-            set.insert(kmer);
+            kmers.insert(kmer);
         }
-        edge_kmer.insert(kmer);
+        potential_edge_kmers.insert(kmer);
     }
-    return set;
+
+    numberOfPotentialEdges = potential_edge_kmers.size();
+
+    set_difference(potential_edge_kmers.begin(), potential_edge_kmers.end(), kmers.begin(), kmers.end(),
+                        inserter(edge_kmer, edge_kmer.end()));
+
+    kmers.insert(edge_kmer.begin(), edge_kmer.end());
+
+    return kmers;
 }
 
 unordered_set<kmer_t> generate_sparse_set(const string &seq, unordered_set<kmer_t> &edge_kmer, const int s){
