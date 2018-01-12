@@ -92,13 +92,14 @@ void test2(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges)
 void test3(const unordered_set<kmer_t> &set, const unordered_set<kmer_t> &edges, int s) {
 
     BasicBF basicBF(set);
-    SparseKBF kbf(set, edges, s);
+    SparseRelaxedKBF kbf(set, edges, s);
 
     auto it = set.begin();
     it++;
     kmer_t random2 = *(it);
-    kmer_t random1 = random2 ^(10 << 5);
+    kmer_t random1 = random2 ^(4 << 5);
     cout << "Test sparse" << endl;
+    cout << kmer_to_string(random2) << endl;
     cout << kbf.lookup(random2) << endl;
     cout << kbf.lookup(random1) << endl;
 
@@ -137,11 +138,11 @@ int main(int argc, char **argv) {
 //    cout << set.size()<< endl;
 
     vector<string> sequences;
-    read_fasta(argv[2], sequences);
-    cout << sequences.size() << endl;
-//    unordered_set<kmer_t> edge_kmers;
-//    unordered_set<kmer_t> kmers(generate_best_fit_set(sequences, edge_kmers, 10));
-//    test3(kmers, edge_kmers, 10);
+    read_fasta(argv[1], sequences);
+    cout << "seq: " << sequences.size() << endl;
+    unordered_set<kmer_t> edge_kmers;
+    unordered_set<kmer_t> kmers(generate_hitting_set_kmers(sequences, edge_kmers));
+    test3(kmers, edge_kmers, 1);
 
     return 0;
 }

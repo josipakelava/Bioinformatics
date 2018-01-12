@@ -147,12 +147,12 @@ struct SparseRelaxedKBF {
 
     bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
-            if (relaxedContainsNeighbours(query, s, s)) {
+            if (relaxedContainsNeighbours(query, s+1, s+1)) {
                 return true;
             }
         } else {
-            for(int i = 0; i < s - 1; i++) {
-                if (relaxedContainsNeighbours(query, i, s - (i + 1))) {
+            for(int i = 0; i < s; i++) {
+                if (relaxedContainsNeighbours(query, i+1, s - i)) {
                     return true;
                 }
             }
