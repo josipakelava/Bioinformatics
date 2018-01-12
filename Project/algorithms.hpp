@@ -112,7 +112,7 @@ struct SparseKBF {
         }
 
         for(int i = 0; i < s; i++) {
-            if (strictContainsNeighbours(query, i +1 , s - i)) {
+            if (strictContainsNeighbours(query, i + 1 , s - i)) {
                 return true;
             }
         }
