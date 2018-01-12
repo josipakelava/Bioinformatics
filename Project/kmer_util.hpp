@@ -11,12 +11,14 @@
 #include "../lib/libbf/bf/all.hpp"
 #include <unordered_map>
 #include <set>
+#include <iostream>
+#include <assert.h>
 
 using namespace std;
 
-const int KMER_LENGTH = 20; //isto kao i u radu
-const int KMER_SHIFT_LEFT = (2 * (KMER_LENGTH - 1));
 using kmer_t = uint64_t;
+const int KMER_LENGTH = 20; //isto kao i u radu
+const kmer_t KMER_SHIFT_LEFT = (uint64_t)2 * KMER_LENGTH - 2;
 
 const kmer_t INVALID_KMER = UINT64_MAX;
 const kmer_t KMER_MASK = ((uint64_t) 1 << (2 * KMER_LENGTH)) - 1;
@@ -29,6 +31,7 @@ inline kmer_t base_to_bits(char c) {
     if (c == 'G' || c == 'g') return 2;
     if (c == 'C' || c == 'c') return 3;
 
+    assert(true);
     return INVALID_KMER;
 }
 
@@ -39,6 +42,7 @@ inline char bits_to_base(kmer_t kmer) {
 
 kmer_t substring_to_kmer(const string &s, int pos) {
     if (pos + KMER_LENGTH > s.length()) {
+        cout << "INVALID" << endl;
         return INVALID_KMER;
     }
 
@@ -47,7 +51,9 @@ kmer_t substring_to_kmer(const string &s, int pos) {
         kmer = kmer << 2 | base_to_bits(s[i + pos]);
     }
 
-    return kmer;
+    if ((kmer&KMER_MASK) != kmer) cout << "ERROR!" << endl;
+
+    return kmer&KMER_MASK;
 }
 
 kmer_t string_to_kmer(const string &s) {
@@ -69,7 +75,7 @@ inline kmer_t add_base_right(kmer_t kmer, char base) {
 }
 
 inline kmer_t add_base_left(kmer_t kmer, char base) {
-    return (kmer >> 2) | base_to_bits(base) << KMER_SHIFT_LEFT;
+    return (kmer >> 2) | (base_to_bits(base) << KMER_SHIFT_LEFT);
 }
 
 bool contains_set(const unordered_set<kmer_t> &query, const bf::basic_bloom_filter &bf) {
@@ -207,8 +213,7 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
         kmer_t right = add_base_right(mid, seq[KMER_LENGTH+1]);
         edge_kmer.insert(left); //first
         m[left].insert(mid);
-        int i = KMER_LENGTH+2;
-        for(; i < seq.size(); i++) {
+        for(int i = KMER_LENGTH+2; i < seq.size(); i++) {
             m[mid].insert(left);
             m[mid].insert(right);
             left = mid;
@@ -236,10 +241,8 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
                 kmerToPtr[kmer]->add(&kv.second);
                 s.insert(kmerToPtr[kmer]);
             }
-
         }
     }
-
     unordered_set<kmer_t> kmers;
     while(!s.empty()) {
         KmerNode* mx = *s.begin();
@@ -267,6 +270,10 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
         delete p;
     }
 
+    //for(auto k : kmers) {cout << kmer_to_string(k) << endl;}
+//    for(auto kmer : edge_kmer) {
+//        kmers.insert(kmer);
+//    }
     return kmers;
 }
 
@@ -380,6 +387,11 @@ unordered_set<kmer_t> relaxed_neighbor_set(kmer_t query, int left, int right) {
         }
     }
 
+//    cout << "susjedi: " << endl;
+//    for(auto k : neighborsFinal) {
+//        cout << k << endl;
+//        cout << kmer_to_string(k) << endl;
+//    }
     return neighborsFinal;
 }
 
