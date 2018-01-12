@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 #include "kmer_util.hpp"
-#include "lib/libbf/bf/all.hpp"
+#include "../lib/libbf/bf/all.hpp"
 #include <unordered_set>
 
 struct BasicBF {

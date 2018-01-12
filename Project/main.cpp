@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lib/libbf/bf/all.hpp"
+#include "../lib/libbf/bf/all.hpp"
 #include "fasta_io.hpp"
 #include "kmer_util.hpp"
 #include "algorithms.hpp"
