@@ -181,7 +181,7 @@ unordered_set<kmer_t> generate_best_fit_set(const vector<string> &sequences, uno
 
 struct KmerNode {
     kmer_t kmer;
-    unsigned int deg;
+    int deg;
     unordered_set<unordered_set<kmer_t>*> neighbours;
 
     KmerNode(kmer_t kmer) : kmer(kmer), deg(0) {}
@@ -192,6 +192,10 @@ struct KmerNode {
     }
 
     void remove(unordered_set<kmer_t>* n) {
+        if(deg == 0) {
+            cout << "deg < 0" << endl;
+            return;
+        }
         neighbours.erase(n);
         deg--;
     }
@@ -200,34 +204,17 @@ struct KmerNode {
 
 struct NodeCMP {
     bool operator()(const KmerNode* first, const KmerNode* second) {
-        return first->deg < second->deg;
+        if (first->deg == second->deg) {
+            return first->kmer > second->kmer;
+        }
+
+        return first->deg > second->deg;
     }
 
 };
 
-unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences, unordered_set<kmer_t> &edge_kmer) {
-    unordered_map<kmer_t, unordered_set<kmer_t>> m;
-    for(const auto &seq : sequences) {
-        kmer_t left = string_to_kmer(seq);
-        kmer_t mid = add_base_right(left, seq[KMER_LENGTH]);
-        kmer_t right = add_base_right(mid, seq[KMER_LENGTH+1]);
-        edge_kmer.insert(left); //first
-        m[left].insert(mid);
-        for(int i = KMER_LENGTH+2; i < seq.size(); i++) {
-            m[mid].insert(left);
-            m[mid].insert(right);
-            left = mid;
-            mid = right;
-            right = add_base_right(right, seq[i]);
-        }
-        m[right].insert(mid);
-        edge_kmer.insert(right);
-    }
-
-
-    set<KmerNode*, NodeCMP> s;
-    unordered_map<kmer_t, KmerNode*> kmerToPtr;
-    vector<KmerNode*> allPtrs;
+void compute_graph(set<KmerNode*, NodeCMP>& s, unordered_map<kmer_t, KmerNode*>& kmerToPtr,
+    vector<KmerNode*> allPtrs, unordered_map<kmer_t, unordered_set<kmer_t>>& m) {
     for(auto& kv : m) {
         for(auto kmer : kv.second) {
             if(kmerToPtr.find(kmer) == kmerToPtr.end()) {
@@ -243,15 +230,48 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
             }
         }
     }
+}
+
+unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences, unordered_set<kmer_t> &edge_kmer) {
+    unordered_map<kmer_t, unordered_set<kmer_t>> leftN, rightN;
+    for(const auto &seq : sequences) {
+        kmer_t left = string_to_kmer(seq);
+        kmer_t mid = add_base_right(left, seq[KMER_LENGTH]);
+        kmer_t right = add_base_right(mid, seq[KMER_LENGTH+1]);
+        edge_kmer.insert(left); //first
+        rightN[left].insert(mid);
+        leftN[left].insert(left);
+        rightN[left].insert(left);
+        for(int i = KMER_LENGTH+2; i < seq.size(); i++) {
+            leftN[mid].insert(left);
+            rightN[mid].insert(right);
+            leftN[mid].insert(mid);
+            rightN[mid].insert(mid);
+            left = mid;
+            mid = right;
+            right = add_base_right(right, seq[i]);
+        }
+        leftN[right].insert(right);
+        rightN[right].insert(right);
+        leftN[right].insert(mid);
+        edge_kmer.insert(right);
+    }
+
+    set<KmerNode*, NodeCMP> s;
+    unordered_map<kmer_t, KmerNode*> kmerToPtr;
+    vector<KmerNode*> allPtrs;
+
+    compute_graph(s, kmerToPtr, allPtrs, leftN);
+    compute_graph(s, kmerToPtr, allPtrs, rightN);
+
     unordered_set<kmer_t> kmers;
     while(!s.empty()) {
         KmerNode* mx = *s.begin();
-        s.erase(s.begin());
+        s.erase(mx);
         kmers.insert(mx->kmer);
-        kmerToPtr.erase(mx->kmer);
         for(auto ns : mx->neighbours) {
             for(auto kmer : *ns) {
-                if(kmer == mx->kmer) continue;
+                if(kmer == mx->kmer || kmerToPtr.find(kmer) == kmerToPtr.end()) continue;
                 s.erase(kmerToPtr[kmer]);
                 kmerToPtr[kmer]->remove(ns);
                 if (kmerToPtr[kmer]->deg > 0) {
@@ -259,7 +279,6 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
                 } else {
                     kmerToPtr.erase(kmer);
                 }
-
             }
         }
     }
@@ -270,10 +289,6 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
         delete p;
     }
 
-    //for(auto k : kmers) {cout << kmer_to_string(k) << endl;}
-//    for(auto kmer : edge_kmer) {
-//        kmers.insert(kmer);
-//    }
     return kmers;
 }
 

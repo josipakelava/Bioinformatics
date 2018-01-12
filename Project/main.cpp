@@ -58,13 +58,13 @@ void testFPR(const vector<string> sequences) {
             falsePositiveNumHittingSet++;
         }
 
-//        if (real && !bestFitBF.lookup(kmer)) {
-//            cout << "BF BF " << endl;
-//        }
-//
-//        if (real && !hittingSetBF.lookup(kmer)) {
-//            cout << "HS FN " << endl;
-//        }
+        if (real && !bestFitBF.lookup(kmer)) {
+            cout << "BF BF " << endl;
+        }
+
+        if (real && !hittingSetBF.lookup(kmer)) {
+            cout << "HS FN " << endl;
+        }
     }
 
     cout << "BASIC FPR " << falsePositiveNumBasic / querySet.size() << endl;
