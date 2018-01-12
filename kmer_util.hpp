@@ -87,20 +87,20 @@ bool contains_set(const unordered_set<kmer_t> &query, const bf::basic_bloom_filt
     return false;
 }
 
-unordered_set<kmer_t> query_set(const vector<kmer_t> &kmers) {
+unordered_set<kmer_t> query_set(const unordered_set<kmer_t> &kmers) {
     unordered_set<kmer_t> query_set;
 
     mt19937 random;
     random.seed(std::random_device()());
 
-    uniform_int_distribution<> kmers_dist(0, kmers.size() - 1);
-    uniform_int_distribution<> base_dist(0, 2*KMER_LENGTH - 1);
+    uniform_int_distribution<> base_dist(0, 2 * KMER_LENGTH - 1);
 
     auto it = kmers.begin();
     for(int i = 0; i < QUERY_SET_SIZE; i++) {
-        kmer_t original = *(it + kmers_dist(random));
+        kmer_t original = *it;
         kmer_t mutated = original ^ 1 << base_dist(random);
         query_set.insert(mutated);
+        it++;
     }
 
     return query_set;
@@ -120,7 +120,7 @@ unordered_set<kmer_t> generate_set(const vector<string> &sequnces){
     return set;
 }
 
-unordered_set<kmer_t> generate_set_edge(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer){
+unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer){
 
     unordered_set<kmer_t> set;
     for (string seq : sequnces) {

@@ -106,13 +106,13 @@ struct SparseKBF {
 
     bool lookup(kmer_t query) {
         if (bf->lookup(query)) {
-            if (strictContainsNeighbours(query, s, s)) {
+            if (strictContainsNeighbours(query, s+1, s+1)) {
                 return true;
             }
         }
 
-        for(int i = 0; i < s - 1; i++) {
-            if (strictContainsNeighbours(query, i, s - (i + 1))) {
+        for(int i = 0; i < s; i++) {
+            if (strictContainsNeighbours(query, i +1 , s - i)) {
                 return true;
             }
         }
