@@ -23,7 +23,7 @@ const kmer_t KMER_SHIFT_LEFT = (uint64_t)2 * KMER_LENGTH - 2;
 const kmer_t INVALID_KMER = UINT64_MAX;
 const kmer_t KMER_MASK = ((uint64_t) 1 << (2 * KMER_LENGTH)) - 1;
 
-const int QUERY_SET_SIZE = 1e4;
+const int QUERY_SET_SIZE = 1e6;
 
 inline kmer_t base_to_bits(char c) {
     if (c == 'A' || c == 'a') return 0;
@@ -128,7 +128,7 @@ unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, un
     for (string seq : sequnces) {
         kmer_t kmer = string_to_kmer(seq);
         potential_edge_kmers.insert(kmer);
-        for (int i = KMER_LENGTH + 1; i < seq.length() - 1; i++) {
+        for (int i = KMER_LENGTH; i < seq.length(); i++) {
             kmer = add_base_right(kmer, seq[i]);
             kmers.insert(kmer);
         }
