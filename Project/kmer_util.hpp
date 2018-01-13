@@ -179,10 +179,10 @@ unordered_set<kmer_t> generate_best_fit_set(const vector<string> &sequences, uno
 
         int i = 0;
         for(; i <= mx_ind; i++) edge_kmer.insert(substring_to_kmer(seq, i));
-        for (i = mx_ind; i < seq.length() - KMER_LENGTH + 1; i += s + 1) {
+        for (i = mx_ind; i < seq.length() - KMER_LENGTH + 1; i += MOD) {
             kmers.insert(substring_to_kmer(seq, i));
         }
-        for(i -= s + 1; i < seq.length() - KMER_LENGTH+1; i++)
+        for(i -= MOD; i < seq.length() - KMER_LENGTH + 1; i++)
             edge_kmer.insert(substring_to_kmer(seq, i));
     }
     return kmers;
@@ -336,7 +336,7 @@ unordered_set<kmer_t> strict_neighbor_set(kmer_t query, int left, int right) {
         }
     }
 
-    while(result.size() > 0) {
+    while(result.size() > 0 && left > 0) {
         kmer_t kmer = result.front(); result.pop();
         neighbors.insert(kmer);
     }
@@ -359,7 +359,7 @@ unordered_set<kmer_t> strict_neighbor_set(kmer_t query, int left, int right) {
         }
     }
 
-    while(result.size() > 0) {
+    while(result.size() > 0 && right > 0) {
         kmer_t kmer = result.front(); result.pop();
         neighbors.insert(kmer);
     }
