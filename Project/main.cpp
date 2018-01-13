@@ -96,7 +96,6 @@ void testFPR(const vector<string> sequences) {
     cout << "Table 4. Number of k-mers Selected by Sparse k-mer Bloom Filter" << endl;
     cout << "No. of k-mers classic " << allKmers.size() << endl;
     cout << "No. of k-mers best match " << bestFitKmers.size() << endl;
-//    nije dobro
     cout << "No. of k-mers hitting set " <<  hittingSetKmers.size() << endl;
 }
 
