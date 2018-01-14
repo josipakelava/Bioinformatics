@@ -20,6 +20,7 @@ using namespace std;
  * @param querySet set of queries
  * @param name name of Bloom filter type
  */
+template<class BF>
 void doQueries(BF& bf, vector<bool>& result, const unordered_set<kmer_t>& querySet, const string& name) {
     result.resize(querySet.size());
     auto qStart = chrono::system_clock::now();
