@@ -41,7 +41,7 @@ void testOneSided(const unordered_set<kmer_t>& allKmers, const unordered_set<kme
     std::chrono::duration<double> elapsed_seconds = end-start;
     cout << "One sided init time: " << elapsed_seconds.count() << endl;
 
-    doQueries<OneSided>(oneSidedBF, result, querySet, "1 Sided");
+    doQueries<OneSided>(oneSidedBF, result, querySet, "One sided");
 }
 
 void testTwoSided(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
@@ -57,7 +57,7 @@ void testTwoSided(const vector<string>& sequences, const unordered_set<kmer_t>& 
     cout << "Two sided edges: " << allKmersEdges.size() << endl;
     auto twoSidedEnd = chrono::system_clock::now();
 
-    doQueries<TwoSided>(twoSidedBF, result, querySet, "2 Sided");
+    doQueries<TwoSided>(twoSidedBF, result, querySet, "Two sided");
 }
 
 void testFPRBestFit(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
@@ -70,7 +70,7 @@ void testFPRBestFit(const vector<string>& sequences, const unordered_set<kmer_t>
     std::chrono::duration<double> elapsed_seconds = end-start;
     cout << "Best match init time: " << elapsed_seconds.count() << endl;
     cout << "Best match no. of kmers: " << bestFitKmers.size() << endl;
-    doQueries<SparseKBF>(bestFitBF, result, querySet, "Best fit");
+    doQueries<SparseKBF>(bestFitBF, result, querySet, "Best match");
 }
 
 void testFPRHittingSet(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
@@ -84,7 +84,7 @@ void testFPRHittingSet(const vector<string>& sequences, const unordered_set<kmer
     cout << "Hit set init time: " << elapsed_seconds.count() << endl;
 
     cout << "Hit set no. of kmers: " << hittingSetKmers.size() << endl;
-    doQueries<SparseRelaxedKBF>(hittingSetBF, result, querySet, "Hit fit");
+    doQueries<SparseRelaxedKBF>(hittingSetBF, result, querySet, "Hitting set");
 }
 
 void countFPR(const vector<bool>& real, const vector<bool>& result, const string& name) {

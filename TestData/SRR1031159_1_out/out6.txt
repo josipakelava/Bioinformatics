@@ -1,0 +1,17 @@
+/Users/ikrpelnik/FER/BIO/SRR1031159_1.fasta
+Basic init time: 19.3984
+Basic no. of kmers: 29937099
+Basic query time: 0.005458
+Basic FPR: 0.0327
+One sided init time: 19.6939
+1 Sided query time: 0.008081
+One sided FPR: 0.0102
+Two sided init time: 54.4928
+Two sided potential edges: 1088645
+Two sided edges: 1088644
+2 Sided query time: 0.008131
+Two sided FPR: 0.0007
+Best match init time: 74.7262
+Best match no. of kmers: 15121029
+Best fit query time: 0.184023
+Best fit FPR: 0.0289
