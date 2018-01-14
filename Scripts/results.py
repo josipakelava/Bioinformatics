@@ -2,7 +2,7 @@ ls = [[] for i in range(16)]
 
 nxt = lambda x : float(x.readline().strip().split()[-1])
 for i in range(1, 11):
-    with open('SRR1031159_1_out/out'+str(i)+('.txt'), 'r') as f:
+    with open('../TestData/SRR1031159_1_1e6_out/out'+str(i)+('.txt'), 'r') as f:
         f.readline()
         for i in range(16):
             ls[i].append(nxt(f))
