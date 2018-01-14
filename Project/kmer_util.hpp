@@ -1,4 +1,4 @@
-#ifndef BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
+    #ifndef BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
 #define BIOINFORMATIKA_PROJEKT_KMER_UTIL_HPP
 
 #include <cstdint>
@@ -139,8 +139,11 @@ unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, un
 
     numberOfPotentialEdges = potential_edge_kmers.size();
 
-    set_difference(potential_edge_kmers.begin(), potential_edge_kmers.end(), kmers.begin(), kmers.end(),
-                        inserter(edge_kmer, edge_kmer.end()));
+    for(kmer_t kmer : potential_edge_kmers) {
+        if (kmers.find(kmer) == kmers.end()) {
+            edge_kmer.insert(kmer);
+        }
+    }
 
     kmers.insert(edge_kmer.begin(), edge_kmer.end());
 
