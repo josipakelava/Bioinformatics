@@ -6,9 +6,20 @@
 #include "kmer_util.hpp"
 #include "algorithms.hpp"
 
+/**
+ * main.cpp contains functions for testing
+ * different variants of Bloom filter
+ *
+ */
 using namespace std;
 
-template<class BF>
+/**
+ * Function checks Bloom filter for queries
+ * @param bf type of Bloom filter
+ * @param result vector containing answeres for queries
+ * @param querySet set of queries
+ * @param name name of Bloom filter type
+ */
 void doQueries(BF& bf, vector<bool>& result, const unordered_set<kmer_t>& querySet, const string& name) {
     result.resize(querySet.size());
     auto qStart = chrono::system_clock::now();
@@ -21,6 +32,12 @@ void doQueries(BF& bf, vector<bool>& result, const unordered_set<kmer_t>& queryS
     cout << name << " query time: " << elapsed_seconds.count() << endl;
 }
 
+/**
+ * Test for basic Bloom filter
+ * @param allKmers set of all queries from sequences
+ * @param querySet set of queries
+ * @param result vector containing answeres for queries
+ */
 void testFPRBasic(const unordered_set<kmer_t>& allKmers, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
     auto basicStart = chrono::system_clock::now();
     BasicBF basicBF(allKmers);
@@ -31,7 +48,12 @@ void testFPRBasic(const unordered_set<kmer_t>& allKmers, const unordered_set<kme
     cout << "Basic no. of kmers: " << allKmers.size() << endl;
     doQueries<BasicBF>(basicBF, result, querySet, "Basic");
 }
-
+/**
+ * Test for one sided Bloom filter
+ * @param allKmers set of all queries from sequences
+ * @param querySet set of queries
+ * @param result vector containing answeres for queries
+ */
 void testOneSided(const unordered_set<kmer_t>& allKmers, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
     auto start = chrono::system_clock::now();
     OneSided oneSidedBF(allKmers);
@@ -44,6 +66,12 @@ void testOneSided(const unordered_set<kmer_t>& allKmers, const unordered_set<kme
     doQueries<OneSided>(oneSidedBF, result, querySet, "One sided");
 }
 
+/**
+ * Test for two sided Bloom filter
+ * @param sequences all sequences
+ * @param querySet set of queries
+ * @param result vector containing answeres for queries
+ */
 void testTwoSided(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
     auto start = chrono::system_clock::now();
     unordered_set<kmer_t> allKmersEdges;
@@ -60,6 +88,12 @@ void testTwoSided(const vector<string>& sequences, const unordered_set<kmer_t>& 
     doQueries<TwoSided>(twoSidedBF, result, querySet, "Two sided");
 }
 
+/**
+ * Test for algorithm best fit
+ * @param sequences all sequences
+ * @param querySet set of queries
+ * @param result vector containing answeres for queries
+ */
 void testFPRBestFit(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
     unordered_set<kmer_t> bestFitKmersEdges;
     auto start = chrono::system_clock::now();
@@ -73,6 +107,12 @@ void testFPRBestFit(const vector<string>& sequences, const unordered_set<kmer_t>
     doQueries<SparseKBF>(bestFitBF, result, querySet, "Best match");
 }
 
+/**
+ * Test for algorithm hitting set
+ * @param sequences all sequences
+ * @param querySet set of queries
+ * @param result vector containing answeres for queries
+ */
 void testFPRHittingSet(const vector<string>& sequences, const unordered_set<kmer_t>& querySet, vector<bool>& result) {
     unordered_set<kmer_t> hittingSetEdges;
     auto start = chrono::system_clock::now();
@@ -87,6 +127,12 @@ void testFPRHittingSet(const vector<string>& sequences, const unordered_set<kmer
     doQueries<SparseRelaxedKBF>(hittingSetBF, result, querySet, "Hitting set");
 }
 
+/**
+ * Counts false positive rate
+ * @param real True results for queries
+ * @param result Bloom filter implementation results for queries
+ * @param name Name of Bloom filter variant
+ */
 void countFPR(const vector<bool>& real, const vector<bool>& result, const string& name) {
     int sum = 0;
     for(int i = 0; i < real.size(); i++) {
@@ -97,6 +143,10 @@ void countFPR(const vector<bool>& real, const vector<bool>& result, const string
     cout << name << " FPR: " << ((double) sum / real.size()) << endl;
 }
 
+/**
+ * Function that starts tests
+ * @param sequences all sequnces in file
+ */
 void testFPR(const vector<string>& sequences) {
     unordered_set<kmer_t> allKmers(generate_set(sequences));
     unordered_set<kmer_t> querySet = query_set(allKmers);
