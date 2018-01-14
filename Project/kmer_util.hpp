@@ -225,7 +225,7 @@ struct NodeCMP {
 };
 
 void compute_graph(set<KmerNode*, NodeCMP>& s, unordered_map<kmer_t, KmerNode*>& kmerToPtr,
-    vector<KmerNode*> allPtrs, unordered_map<kmer_t, unordered_set<kmer_t>>& m) {
+    vector<KmerNode*>& allPtrs, unordered_map<kmer_t, unordered_set<kmer_t>>& m) {
     for(auto& kv : m) {
         for(auto kmer : kv.second) {
             if(kmerToPtr.find(kmer) == kmerToPtr.end()) {
