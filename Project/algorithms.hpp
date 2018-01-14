@@ -49,6 +49,14 @@ struct OneSided {
     }
 };
 
+/**
+ * Checks if query is present in the filter based on the existence of its neighbours and edge kmers.
+ * @param query current query
+ * @param edges set of edge k-mers
+ * @param containsLeft existence of left neighbour
+ * @param containsRight existence of right neighbour
+ * @return confirmation for query
+ */
 bool decidePresent(kmer_t query, const unordered_set<kmer_t> &edges, bool containsLeft, bool containsRight) {
     if (containsRight && containsLeft) {
         return true;

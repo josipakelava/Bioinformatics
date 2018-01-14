@@ -25,6 +25,11 @@ const kmer_t KMER_MASK = ((uint64_t) 1 << (2 * KMER_LENGTH)) - 1;
 
 const int QUERY_SET_SIZE = 1e6;
 
+/**
+ * Converts base from char to kmer
+ * @param c base
+ * @return kmer for base
+ */
 inline kmer_t base_to_bits(char c) {
     if (c == 'A' || c == 'a') return 0;
     if (c == 'T' || c == 't') return 1;
@@ -35,11 +40,22 @@ inline kmer_t base_to_bits(char c) {
     return INVALID_KMER;
 }
 
+/**
+* Converts base from kmer to char
+* @param kmer base
+* @return bits for base
+*/
 inline char bits_to_base(kmer_t kmer) {
     const char m[4] = {'A', 'T', 'G', 'C'};
     return m[kmer & 3];
 }
 
+/**
+ * Converts part of string to  kmer
+ * @param s string to convert
+ * @param pos start of convertions
+ * @return converted string
+ */
 kmer_t substring_to_kmer(const string &s, int pos) {
     if (pos + KMER_LENGTH > s.length()) {
         cout << "INVALID" << endl;
@@ -56,10 +72,20 @@ kmer_t substring_to_kmer(const string &s, int pos) {
     return kmer&KMER_MASK;
 }
 
+/**
+ * Converts string to  kmer
+ * @param s string to convert
+ * @return converted string
+ */
 kmer_t string_to_kmer(const string &s) {
     return substring_to_kmer(s, 0);
 }
 
+/**
+ * Converts kmer to string
+ * @param kmer kmer to convert
+ * @return converted kmer
+ */
 string kmer_to_string(kmer_t kmer) {
     string s = "";
     for (int i = 0; i < KMER_LENGTH; i++) {
@@ -70,14 +96,32 @@ string kmer_to_string(kmer_t kmer) {
     return s;
 }
 
+/**
+ * Adds base to the right side of kmer
+ * @param kmer
+ * @param base base to add to the kmer
+ * @return new kmer
+ */
 inline kmer_t add_base_right(kmer_t kmer, char base) {
     return ((kmer << 2) & KMER_MASK) | base_to_bits(base);
 }
 
+/**
+* Adds base to the left side of kmer
+* @param kmer
+* @param base base to add to the kmer
+* @return new kmer
+*/
 inline kmer_t add_base_left(kmer_t kmer, char base) {
     return (kmer >> 2) | (base_to_bits(base) << KMER_SHIFT_LEFT);
 }
 
+/**
+ * Checks if bloom filter contains at least one kmer from query set
+ * @param query set of kmers
+ * @param bf bloom filter
+ * @return true if at least one kmer exist
+ */
 bool contains_set(const unordered_set<kmer_t> &query, const bf::basic_bloom_filter &bf) {
     for (kmer_t kmer : query) {
         if (bf.lookup(kmer)) {
@@ -87,6 +131,11 @@ bool contains_set(const unordered_set<kmer_t> &query, const bf::basic_bloom_filt
     return false;
 }
 
+/**
+ * Generates set of queries. Number of queries is defined by parameter QUERY_SET_SIZE.
+ * @param kmers set of possible kmers for query
+ * @return set of queries
+ */
 unordered_set<kmer_t> query_set(const unordered_set<kmer_t> &kmers) {
     unordered_set<kmer_t> query_set;
 
@@ -106,6 +155,11 @@ unordered_set<kmer_t> query_set(const unordered_set<kmer_t> &kmers) {
     return query_set;
 }
 
+/**
+ * Generates kmers from sequnecs
+ * @param sequnces sequnces to convert
+ * @return set of kmers
+ */
 unordered_set<kmer_t> generate_set(const vector<string> &sequnces){
 
     unordered_set<kmer_t> set;
@@ -120,6 +174,13 @@ unordered_set<kmer_t> generate_set(const vector<string> &sequnces){
     return set;
 }
 
+/**
+ * Generates kmers from sequnces while saving edge kmers
+ * @param sequnces sequnces to convert
+ * @param edge_kmer refernce to set of edge kmers
+ * @param numberOfPotentialEdges 
+ * @return set of generated kmers
+ */
 unordered_set<kmer_t> generate_set_with_edges(const vector<string> &sequnces, unordered_set<kmer_t> &edge_kmer, int &numberOfPotentialEdges){
 
     unordered_set<kmer_t> kmers;
@@ -306,18 +367,35 @@ unordered_set<kmer_t> generate_hitting_set_kmers(const vector<string>& sequences
     return kmers;
 }
 
+/**
+ * Generates left neighbours for query
+ * @param query
+ * @return set of left neighbours
+ */
 unordered_set<kmer_t> neighbor_left_set(kmer_t query) {
     unordered_set<kmer_t> neighbors = {add_base_left(query, 'A'), add_base_left(query, 'G'), add_base_left(query, 'T'),
                                 add_base_left(query, 'C')};
     return neighbors;
 }
 
+/**
+* Generates right neighbours for query
+* @param query
+* @return set of right neighbours
+*/
 unordered_set<kmer_t> neighbor_right_set(kmer_t query) {
     unordered_set<kmer_t> neighbors = {add_base_right(query, 'A'), add_base_right(query, 'G'), add_base_right(query, 'T'),
                                 add_base_right(query, 'C')};
     return neighbors;
 }
 
+/**
+* Generates neighbour set for strict k-mer sparsification
+* @param query
+* @param left number of left k-mers
+* @param right number of right k-mers
+* @return set of strict neighbours
+ */
 unordered_set<kmer_t> strict_neighbor_set(kmer_t query, int left, int right) {
     unordered_set<kmer_t> neighbors;
 
@@ -372,6 +450,13 @@ unordered_set<kmer_t> strict_neighbor_set(kmer_t query, int left, int right) {
     return neighbors;
 }
 
+/**
+ * Generates neighbour set for relaxed k-mer sparsification
+ * @param query
+ * @param left number of left k-mers
+ * @param right number of right k-mers
+ * @return set of relaxed neighbours
+ */
 unordered_set<kmer_t> relaxed_neighbor_set(kmer_t query, int left, int right) {
     unordered_set<kmer_t> neighborsFinal;
 
@@ -416,11 +501,6 @@ unordered_set<kmer_t> relaxed_neighbor_set(kmer_t query, int left, int right) {
         }
     }
 
-//    cout << "susjedi: " << endl;
-//    for(auto k : neighborsFinal) {
-//        cout << k << endl;
-//        cout << kmer_to_string(k) << endl;
-//    }
     return neighborsFinal;
 }
 
