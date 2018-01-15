@@ -9,7 +9,6 @@
 /**
  * main.cpp contains functions for testing
  * different variants of Bloom filter
- *
  */
 using namespace std;
 

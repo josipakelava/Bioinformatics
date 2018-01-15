@@ -7,6 +7,8 @@
 
 using namespace std;
 
+//@author Ivan Krpelnik
+
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -45,6 +47,7 @@ static inline std::string trim_copy(std::string s) {
     return s;
 }
 
+//reads fasta file
 void read_fasta(const char *filePath, vector<string>& reads) {
     ifstream infile(filePath);
     string buildSeq = "";
