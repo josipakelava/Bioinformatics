@@ -6,6 +6,10 @@
 #include "kmer_util.hpp"
 #include "../lib/libbf/bf/all.hpp"
 #include <unordered_set>
+/**
+ * Each algorithm contains its own structure
+ * All structures have constructor and lookup function for bloom filter
+ */
 
 struct BasicBF {
 
@@ -26,6 +30,9 @@ struct BasicBF {
     }
 };
 
+/**
+ * @author Josipa Kelava
+ */
 struct OneSided {
 
     bf::basic_bloom_filter *bf;
@@ -56,6 +63,7 @@ struct OneSided {
  * @param containsLeft existence of left neighbour
  * @param containsRight existence of right neighbour
  * @return confirmation for query
+ * @author Josipa Kelava
  */
 bool decidePresent(kmer_t query, const unordered_set<kmer_t> &edges, bool containsLeft, bool containsRight) {
     if (containsRight && containsLeft) {
@@ -71,6 +79,9 @@ bool decidePresent(kmer_t query, const unordered_set<kmer_t> &edges, bool contai
     return false;
 }
 
+/**
+ * @author Josipa Kelava
+ */
 struct TwoSided {
 
     unordered_set<kmer_t> edges;
@@ -97,6 +108,9 @@ struct TwoSided {
     }
 };
 
+/**
+ * @author Tea Povic
+ */
 struct SparseKBF {
 
     bf::basic_bloom_filter *bf;
@@ -138,6 +152,9 @@ struct SparseKBF {
     }
 };
 
+/**
+ * @author Tea Povic
+ */
 struct SparseRelaxedKBF {
 
     bf::basic_bloom_filter *bf;
