@@ -1,0 +1,19 @@
+Basic init time:  0.2838443
+Basic no. of kmers:  586095.0
+Basic query time:  0.47746469999999996
+Basic FPR:  0.03279893
+One sided init time:  0.2817453
+1 Sided query time:  0.7106100000000001
+One sided FPR:  0.010121465999999999
+Two sided init time:  0.6591412
+Two sided potential edges:  16420.0
+Two sided edges:  15941.0
+2 Sided query time:  0.7137097
+Two sided FPR:  0.0008606786
+Best match init time:  0.8879555
+Best match no. of kmers:  293283.0
+Best fit query time:  16.57026
+Best fit FPR: Hitting set init time:  0.02716574
+Hitting set no. of kmers:  15.90805
+Hitting set query time:  335359.0
+Hitting set FPR:  14.137989999999999

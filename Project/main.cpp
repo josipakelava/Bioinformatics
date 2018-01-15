@@ -138,7 +138,6 @@ void countFPR(const vector<bool>& real, const vector<bool>& result, const string
     int sum = 0;
     for(int i = 0; i < real.size(); i++) {
         sum += real[i] != result[i];
-        if(real[i] && !result[i]) cout << "FALSE NEGATIVE!" << endl;
     }
 
     cout << name << " FPR: " << ((double) sum / real.size()) << endl;
@@ -168,6 +167,8 @@ void testFPR(const vector<string>& sequences) {
     countFPR(real, result, "Two sided");
     testFPRBestFit(sequences, querySet, result);
     countFPR(real, result, "Best fit");
+    testFPRHittingSet(sequences, querySet, result);
+    countFPR(real, result, "Hitting set");
 }
 
 

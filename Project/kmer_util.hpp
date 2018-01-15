@@ -147,9 +147,12 @@ unordered_set<kmer_t> query_set(const unordered_set<kmer_t> &kmers) {
     auto it = kmers.begin();
     for(int i = 0; i < QUERY_SET_SIZE; i++) {
         kmer_t original = *it;
-        kmer_t mutated = original ^ 1 << base_dist(random);
+        kmer_t mutated = (original ^ (1 << base_dist(random)))&KMER_MASK;
         query_set.insert(mutated);
         it++;
+        if (it == kmers.end()) {
+            it = kmers.begin();
+        }
     }
 
     return query_set;

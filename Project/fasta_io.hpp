@@ -46,7 +46,6 @@ static inline std::string trim_copy(std::string s) {
 }
 
 void read_fasta(const char *filePath, vector<string>& reads) {
-    std::cout << filePath << std::endl;
     ifstream infile(filePath);
     string buildSeq = "";
     for(string line; getline(infile, line);) {

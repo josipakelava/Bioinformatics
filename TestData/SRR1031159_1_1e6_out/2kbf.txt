@@ -1,0 +1,5 @@
+/Users/ikrpelnik/FER/BIO/SRR1031159_1.fasta
+Two sided init time: 55.6306
+Two sided potential edges: 1088645
+Two sided edges: 695556
+Two sided query time: 0

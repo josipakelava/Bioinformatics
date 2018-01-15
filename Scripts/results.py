@@ -1,10 +1,10 @@
-ls = [[] for i in range(16)]
+ls = [[] for i in range(20)]
 
 nxt = lambda x : float(x.readline().strip().split()[-1])
 for i in range(1, 11):
-    with open('../TestData/SRR1031159_1_1e6_out/out'+str(i)+('.txt'), 'r') as f:
+    with open('../TestData/1e4_out/out'+str(i)+('.txt'), 'r') as f:
         f.readline()
-        for i in range(16):
+        for i in range(20):
             ls[i].append(nxt(f))
 
 txt = [
@@ -24,6 +24,10 @@ txt = [
     "Best match no. of kmers: ",
     "Best fit query time: ",
     "Best fit FPR: "
+    "Hitting set init time: ",
+    "Hitting set no. of kmers: ",
+    "Hitting set query time: ",
+    "Hitting set FPR: "
 ]
 
 for l, t in zip(ls, txt):

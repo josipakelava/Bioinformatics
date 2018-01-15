@@ -1,0 +1,17 @@
+/Users/ikrpelnik/FER/BIO/ERR233214_1.fasta
+Basic init time: 26.0828
+Basic no. of kmers: 41766273
+Basic query time: 0.577873
+Basic FPR: 0.032579
+One sided init time: 26.1001
+One sided query time: 0.903285
+One sided FPR: 0.0102483
+Two sided init time: 277.791
+Two sided potential edges: 6310923
+Two sided edges: 1328281
+Two sided query time: 0.912814
+Two sided FPR: 0.000899029
+Best match init time: 594.089
+Best match no. of kmers: 21775771
+Best match query time: 17.8799
+Best fit FPR: 0.0272459

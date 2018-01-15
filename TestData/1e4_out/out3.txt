@@ -1,0 +1,21 @@
+/Users/ikrpelnik/FER/BIO/Bioinformatika-projekt/TestData/1e4.fasta
+Basic init time: 0.273279
+Basic no. of kmers: 586095
+Basic query time: 0.457362
+Basic FPR: 0.0325731
+One sided init time: 0.272953
+One sided query time: 0.691063
+One sided FPR: 0.0100144
+Two sided init time: 0.630675
+Two sided potential edges: 16420
+Two sided edges: 15941
+Two sided query time: 0.683876
+Two sided FPR: 0.000855101
+Best match init time: 0.883462
+Best match no. of kmers: 293283
+Best match query time: 16.441
+Best fit FPR: 0.0269834
+Hit set init time: 15.6585
+Hit set no. of kmers: 335359
+Hitting set query time: 14.0173
+Hitting set FPR: 0.0301469
