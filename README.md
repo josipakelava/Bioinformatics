@@ -10,3 +10,9 @@ In this project existing implementation of Bloom filter was used. Implementation
 https://github.com/mavam/libbf
 
 
+
+# Install
+cmake CMakeLists.txt
+
+# Run
+
