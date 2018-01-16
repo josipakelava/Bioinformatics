@@ -19,4 +19,3 @@ set(SOURCE_FILES
         Project/fasta_io.hpp)
 
 add_executable(Bioinformatika_projekt ${SOURCE_FILES})
-target_link_libraries(Bioinformatika_projekt ${Boost_LIBRARIES})
