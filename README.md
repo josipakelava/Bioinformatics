@@ -11,7 +11,6 @@ https://github.com/mavam/libbf
 
 # Build dependency
 
-If cmake is not installed:
 sudo apt-get install cmake
 
 # Install
