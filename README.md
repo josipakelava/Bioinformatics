@@ -15,4 +15,4 @@ https://github.com/mavam/libbf
 cmake CMakeLists.txt
 
 # Run
-
+./cmake-build-debug/Bioinformatika_projekt path/to/sequence.fasta
