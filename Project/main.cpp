@@ -5,12 +5,15 @@
 #include "fasta_io.hpp"
 #include "kmer_util.hpp"
 #include "algorithms.hpp"
+#include <fstream>
 
 /**
  * main.cpp contains functions for testing
  * different variants of Bloom filter
  */
 using namespace std;
+
+fstream stats;
 
 /**
  * Function checks Bloom filter for queries
@@ -29,7 +32,7 @@ void doQueries(BF& bf, vector<bool>& result, const unordered_set<kmer_t>& queryS
     }
     auto qEnd = chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = qEnd - qStart;
-    cout << name << " query time: " << elapsed_seconds.count() << endl;
+    stats << name << " query time: " << elapsed_seconds.count() << endl;
 }
 
 /**
@@ -44,8 +47,8 @@ void testFPRBasic(const unordered_set<kmer_t>& allKmers, const unordered_set<kme
     auto basicEnd = chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = basicEnd-basicStart;
-    cout << "Basic init time: " << elapsed_seconds.count() << endl;
-    cout << "Basic no. of kmers: " << allKmers.size() << endl;
+    stats << "Basic init time: " << elapsed_seconds.count() << endl;
+    stats << "Basic no. of kmers: " << allKmers.size() << endl;
     doQueries<BasicBF>(basicBF, result, querySet, "Basic");
 }
 /**
@@ -61,7 +64,7 @@ void testOneSided(const unordered_set<kmer_t>& allKmers, const unordered_set<kme
 
 
     std::chrono::duration<double> elapsed_seconds = end-start;
-    cout << "One sided init time: " << elapsed_seconds.count() << endl;
+    stats << "One sided init time: " << elapsed_seconds.count() << endl;
 
     doQueries<OneSided>(oneSidedBF, result, querySet, "One sided");
 }
@@ -80,9 +83,9 @@ void testTwoSided(const vector<string>& sequences, const unordered_set<kmer_t>& 
     TwoSided twoSidedBF(allKmers, allKmersEdges);
     auto end = chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
-    cout << "Two sided init time: " << elapsed_seconds.count() << endl;
-    cout << "Two sided potential edges: " << numberOfPotentialEdges << endl;
-    cout << "Two sided edges: " << allKmersEdges.size() << endl;
+    stats << "Two sided init time: " << elapsed_seconds.count() << endl;
+    stats << "Two sided potential edges: " << numberOfPotentialEdges << endl;
+    stats << "Two sided edges: " << allKmersEdges.size() << endl;
     auto twoSidedEnd = chrono::system_clock::now();
 
     doQueries<TwoSided>(twoSidedBF, result, querySet, "Two sided");
@@ -102,8 +105,8 @@ void testFPRBestFit(const vector<string>& sequences, const unordered_set<kmer_t>
     auto end = chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = end-start;
-    cout << "Best match init time: " << elapsed_seconds.count() << endl;
-    cout << "Best match no. of kmers: " << bestFitKmers.size() << endl;
+    stats << "Best match init time: " << elapsed_seconds.count() << endl;
+    stats << "Best match no. of kmers: " << bestFitKmers.size() << endl;
     doQueries<SparseKBF>(bestFitBF, result, querySet, "Best match");
 }
 
@@ -121,9 +124,9 @@ void testFPRHittingSet(const vector<string>& sequences, const unordered_set<kmer
     auto end = chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_seconds = end-start;
-    cout << "Hit set init time: " << elapsed_seconds.count() << endl;
+    stats << "Hit set init time: " << elapsed_seconds.count() << endl;
 
-    cout << "Hit set no. of kmers: " << hittingSetKmers.size() << endl;
+    stats << "Hit set no. of kmers: " << hittingSetKmers.size() << endl;
     doQueries<SparseRelaxedKBF>(hittingSetBF, result, querySet, "Hitting set");
 }
 
@@ -139,7 +142,7 @@ void countFPR(const vector<bool>& real, const vector<bool>& result, const string
         sum += real[i] != result[i];
     }
 
-    cout << name << " FPR: " << ((double) sum / real.size()) << endl;
+    stats << name << " FPR: " << ((double) sum / real.size()) << endl;
 }
 
 /**
@@ -173,8 +176,14 @@ void testFPR(const vector<string>& sequences) {
 
 int main(int argc, char **argv) {
 
+    if (argc < 3) {
+        cout << "Missing arguments: input.fasta stats.txt" << endl;
+    }
+
     vector<string> sequences;
     read_fasta(argv[1], sequences);
+
+    stats.open(argv[2], ios_base::out);
 
     testFPR(sequences);
 
