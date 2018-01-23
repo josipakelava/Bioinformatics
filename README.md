@@ -15,6 +15,7 @@ sudo apt-get install cmake
 
 # Install
 cmake CMakeLists.txt
+make
 
 # Run
-./cmake-build-debug/Bioinformatika_projekt path/to/sequence.fasta output_file
+./Bioinformatika_projekt path/to/sequence.fasta output_file
